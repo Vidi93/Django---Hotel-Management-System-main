@@ -491,28 +491,24 @@ def generate_report(request, report_type):
     return render(request, 'report.html', {'report': report})
 
 
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(lambda u: u.is_superuser)
 def generate_report(request, report_type):
     if report_type == 'room_occupancy':
         rooms = Room.objects.all()
-        occupancy_data = {room.number: room.booking_set.filter(status='confirmed').count() for room in rooms}
-        report = Report.objects.create(
-            type='room_occupancy',
-            content=occupancy_data
-        )
+        bookings = Booking.objects.filter(startDate__lte=timezone.now(), endDate__gte=timezone.now())
+        occupancy_data = {room.number: bookings.filter(roomNumber=room).exists() for room in rooms}
+        context = {'report_type': 'Ocupación de Habitaciones', 'data': occupancy_data}
     elif report_type == 'user_data':
-        users = CustomUser.objects.all()
+        users = User.objects.all()
         user_data = [{
-            'username': user.user.username,
-            'email': user.user.email,
-            'role': user.role.name if user.role else 'No role',
-            'bookings': user.guest.booking_set.count() if hasattr(user, 'guest') else 0
+            'username': user.username,
+            'email': user.email,
+            'is_staff': user.is_staff,
+            'date_joined': user.date_joined,
+            'last_login': user.last_login
         } for user in users]
-        report = Report.objects.create(
-            type='user_data',
-            content=user_data
-        )
+        context = {'report_type': 'Datos de Usuarios', 'data': user_data}
     else:
-        return HttpResponseBadRequest("Invalid report type")
-
-    return render(request, 'hotel/report.html', {'report': report})
+        return HttpResponseBadRequest("Tipo de informe no válido")
+    
+    return render(request, 'admin/report.html', context)

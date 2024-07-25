@@ -468,22 +468,6 @@ def completeTask(request, pk):
     return render(request, path + "completeTask.html", context)
 
 
-@user_passes_test(lambda u: u.is_superuser)
-def assign_role(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    if request.method == 'POST':
-        # Lógica para asignar rol
-        pass
-    return render(request, 'assign_role.html', {'user': user})
-
-@user_passes_test(lambda u: u.is_superuser)
-def delete_user(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    if request.method == 'POST':
-        user.delete()
-        return redirect('user_list')
-    return render(request, 'confirm_delete_user.html', {'user': user})
-
 
 @user_passes_test(lambda u: u.is_superuser)
 def assign_role(request, user_id):
@@ -502,10 +486,9 @@ def assign_role(request, user_id):
 
 @user_passes_test(lambda u: u.is_superuser)
 def delete_user(request, user_id):
-    custom_user = get_object_or_404(CustomUser, id=user_id)
+    user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
-        user = custom_user.user
-        custom_user.delete()
         user.delete()
-        return redirect('user_list')
-    return render(request, 'accounts/confirm_delete_user.html', {'custom_user': custom_user})
+        messages.success(request, f"Usuario {user.username} eliminado con éxito.")
+        return redirect('employees')
+    return render(request, 'admin/confirm_delete_user.html', {'user': user})

@@ -58,4 +58,6 @@ urlpatterns = [
          deleteAnnouncement, name="deleteAnnouncement"),
     path('deleteBooking/<str:pk>/', deleteBooking, name="deleteBooking"),
     path('completeTask/<str:pk>/', completeTask, name="completeTask"),
+    path('report/<str:report_type>/', hotel_views.generate_report, name='generate_report'),
+    path('delete-user/<int:user_id>/', accounts_views.delete_user, name='delete_user'),
 ]

@@ -58,4 +58,5 @@ urlpatterns = [
          deleteAnnouncement, name="deleteAnnouncement"),
     path('deleteBooking/<str:pk>/', deleteBooking, name="deleteBooking"),
     path('completeTask/<str:pk>/', completeTask, name="completeTask"),
+    path('assign-role/<int:user_id>/', accounts_views.assign_role, name='assign_role'),
 ]

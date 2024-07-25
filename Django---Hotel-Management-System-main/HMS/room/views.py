@@ -471,19 +471,48 @@ def bookings(request):
     #return render(request, path + "booking-make.html", context)##
 
 
-@login_required
+@login_required(login_url='login')
 def booking_make(request):
     if request.method == 'POST':
-        form = BookingForm(request.POST)
-        if form.is_valid():
-            booking = form.save(commit=False)
-            booking.guest = request.user.guest
-            booking.status = 'pending'
-            booking.save()
-            return redirect('booking_confirmation', booking_id=booking.id)
-    else:
-        form = BookingForm()
-    return render(request, 'room/booking_make.html', {'form': form})
+        room_id = request.POST.get("roomid")
+        check_in = request.POST.get("fd")
+        check_out = request.POST.get("ld")
+        
+        if not all([room_id, check_in, check_out]):
+            messages.error(request, "Por favor, complete todos los campos.")
+            return redirect("rooms")
+        
+        try:
+            room = Room.objects.get(number=room_id)
+            check_in_date = datetime.strptime(check_in, '%Y-%m-%d').date()
+            check_out_date = datetime.strptime(check_out, '%Y-%m-%d').date()
+            
+            if check_in_date >= check_out_date:
+                messages.error(request, "La fecha de salida debe ser posterior a la fecha de entrada.")
+                return redirect("rooms")
+            
+            # Verificar disponibilidad
+            if not room.is_available(check_in_date, check_out_date):
+                messages.error(request, "La habitación no está disponible para las fechas seleccionadas.")
+                return redirect("rooms")
+            
+            # Crear la reserva
+            booking = Booking.objects.create(
+                guest=request.user.guest,
+                roomNumber=room,
+                startDate=check_in_date,
+                endDate=check_out_date
+            )
+            
+            messages.success(request, "Reserva realizada con éxito.")
+            return redirect("payment")
+        
+        except Room.DoesNotExist:
+            messages.error(request, "Habitación no encontrada.")
+        except ValueError:
+            messages.error(request, "Formato de fecha inválido.")
+    
+    return redirect("rooms")
 
 @login_required(login_url='login')
 def deleteBooking(request, pk):

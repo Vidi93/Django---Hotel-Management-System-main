@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+{% block context %}
+<h2>Confirmar Eliminación de Usuario</h2>
+<p>¿Estás seguro de que quieres eliminar al usuario {{ user.username }}?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Sí, eliminar</button>
+    <a href="{% url 'employees' %}">Cancelar</a>
+</form>
+{% endblock %}
