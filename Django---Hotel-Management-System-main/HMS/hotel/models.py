@@ -8,7 +8,7 @@ from accounts.models import Guest, Employee
 # Create your models here.
 class Announcement(models.Model):
     content = models.TextField()
-    sender = models.ForeignKey(Employee, null=True, on_delete=models.CASCADE)
+    sender = models.ForeignKey('accounts.Employee', null=True, on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now)
 
     def __str__(self):
@@ -38,14 +38,14 @@ class Event(models.Model):
 class EventAttendees(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     numberOfDependees = models.IntegerField(default=0)
-    guest = models.ForeignKey(Guest,   null=True, on_delete=models.CASCADE)
+    guest = models.ForeignKey('accounts.Guest',   null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.event) + " " + str(self.guest)
 
 
 class Bills(models.Model):
-    guest = models.ForeignKey(Guest,   null=True, on_delete=models.CASCADE)
+    guest = models.ForeignKey('accounts.Guest',   null=True, on_delete=models.CASCADE)
     totalAmount = models.FloatField()
     summary = models.TextField()
     date = models.DateTimeField(default=timezone.now)

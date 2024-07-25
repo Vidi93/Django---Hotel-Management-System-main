@@ -39,7 +39,7 @@ class Booking(models.Model):
         ('completed', 'Completada'),
     ]
     roomNumber = models.ForeignKey(Room, on_delete=models.CASCADE)
-    guest = models.ForeignKey(Guest, null=True, on_delete=models.CASCADE)
+    guest = models.ForeignKey('accounts.Guest', null=True, on_delete=models.CASCADE)
     dateOfReservation = models.DateField(default=timezone.now)
     startDate = models.DateField()
     endDate = models.DateField()
