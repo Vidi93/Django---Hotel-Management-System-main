@@ -1,0 +1,12 @@
+{% extends '../index.html' %}
+
+{% block context %}
+<h2>Confirmación de Reserva</h2>
+<p>Tu reserva ha sido confirmada.</p>
+<p>Detalles de la reserva:</p>
+<ul>
+    <li>Habitación: {{ booking.room.number }}</li>
+    <li>Fecha de inicio: {{ booking.start_date }}</li>
+    <li>Fecha de fin: {{ booking.end_date }}</li>
+</ul>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends '../index.html' %}
+
+{% block context %}
+
+<div class="row justify-content-center m-5">
+
+    <div class="card border-info shadow-lg w-75">
+
+        <div class="card-body">
+
+            <p>Quieres marcar esta tarea como completada : ?</p> <br>
+            <p>Descripcion de la Tarea : {{ task.description }} </p> <br>
+            <p>Hora de Inicio : {{ task.startTime }}</p><br>
+            <p>Hora de Finalizacion : {{ task.endTime }} </p>
+
+            <form action="{% url 'completeTask' task.id %}" method="post">
+                {% csrf_token %}
+                <a class="btn btn-danger" href="{% url 'tasks' %}">Cancelar</a>
+
+                <input class="btn btn-success" type="submit" value="Confirm">
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+&nbsp
+
+{% endblock %}

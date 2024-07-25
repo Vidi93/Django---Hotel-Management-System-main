@@ -1,0 +1,103 @@
+<!--Admin Navbar-->
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg py-3 " role="navigation">
+    <div class="container">
+        <a href="" class="navbar-brand">
+
+            <h2 class="text-capitalize">
+                {{ request.user.first_name }} {{ request.user.last_name }} -
+                <small>
+                    {{ role }}
+                </small>
+            </h2>
+        </a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarTags">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarTags">
+            <ul class="navbar-nav ml-auto">
+
+
+                <li class="nav-item dropdown p-2">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Menus
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+
+                        <!--Dropdpwn items are changed by role-->
+
+                        {% if role == 'admin' %}
+
+                        <a class="dropdown-item" href="{% url 'guests'%}">Clientes</a>
+                        <a class="dropdown-item" href="{% url 'employees'%}">Empleados</a>
+                        <a class="dropdown-item" href="{% url 'events'%}">Eventos</a>
+                        <a class="dropdown-item" href="{% url 'bookings' %}">Reservas</a>
+                        <a class="dropdown-item" href="{% url 'rooms' %}">Habitaciones</a>
+                        <a class="dropdown-item" href="{% url 'room-services' %}">Servicio a la Habitacion</a>
+                        <a class="dropdown-item" href="{% url 'announcements' %}">Anuncios</a>
+                        <a class="dropdown-item" href="{% url 'refunds' %}">Reembolsos</a>
+
+                        {% elif role == 'guest' %}
+
+                        <a class="dropdown-item" href="{% url 'announcements' %}">Anuncios</a>
+                        <a class="dropdown-item" href="{% url 'rooms' %}">Reservar Habitacion</a>
+                        <a class="dropdown-item" href="{% url 'current-room-services' %}">Servicio a la Habitacion recientes</a>
+                        <a class="dropdown-item" href="{% url 'events' %}">Eventos</a>
+
+                        {% if request.user.guest.currentRoom != None %}
+                        <a class="dropdown-item" href="{% url 'room-profile' request.user.guest.currentRoom %}">Mi
+                            Habitacion</a>
+                        {% else %}<a class="dropdown-item" href="{% url 'rooms' %}">Mi Habitacion</a> {% endif %}
+
+
+                        {% elif role == 'manager' %}
+
+                        <a class="dropdown-item" href="{% url 'guests'%}">Clientes</a>
+                        <a class="dropdown-item" href="{% url 'employees'%}">Empleados</a>
+                        <a class="dropdown-item" href="{% url 'events'%}">Eventos</a>
+                        <a class="dropdown-item" href="{% url 'bookings' %}">Reservas</a>
+                        <a class="dropdown-item" href="{% url 'rooms' %}">Habitaciones</a>
+                        <a class="dropdown-item" href="{% url 'room-services' %}">Servicio a la Habitacion</a>
+                        <a class="dropdown-item" href="{% url 'announcements' %}">Anuncios</a>
+                        <a class="dropdown-item" href="{% url 'storage' %}">Inventario</a>
+                        <a class="dropdown-item" href="{% url 'refunds' %}">Reembolsos</a>
+
+
+                        {% elif role == 'receptionist' %}
+
+                        <a class="dropdown-item" href="{% url 'guests'%}">Informacion de Clientes</a>
+                        <a class="dropdown-item" href="{% url 'rooms'%}">Informacion de Habitaciones</a>
+                        <a class="dropdown-item" href="{% url 'events'%}">Informacion de Eventos</a>
+                        <a class="dropdown-item" href="{% url 'bookings' %}">Informacion de Reservas</a>
+                        <a class="dropdown-item" href="{% url 'announcements'%}">Anuncios</a>
+
+                        {% elif role == 'staff' %}
+
+                        <a class="dropdown-item" href="{% url 'tasks'%}">Mis Tareas</a>
+                        <a class="dropdown-item" href="{% url 'announcements'%}">Anuncios</a>
+                        <a class="dropdown-item" href="{% url 'food-menu'%}">Menu de Comidas</a>
+                        <a class="dropdown-item" href="{% url 'storage'%}">Inventario</a>
+
+                        {% endif %}
+
+                    </div>
+                </li>
+
+
+                <li class="nav-item mr-3 p-2">
+                    {% if role == 'staff' or role == 'receptionist' or role == 'admin' or role == 'manager' %}
+                    <a href="{% url 'employee-profile' user.id %}" class="nav-link">Perfiles</a>
+                    {% endif %}
+                    {% if role == 'guest' %}
+                    <a href="{% url 'guest-profile' user.id %}" class="nav-link">Perfil</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item p-2 ">
+                    <a href="{% url 'logout' %}" class="nav-link">Cerrar Sesion</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

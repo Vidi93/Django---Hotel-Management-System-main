@@ -1,0 +1,20 @@
+<div class="row justify-content-center m-5">
+
+    <div class="card border-danger shadow-lg w-75">
+
+        <div class="card-body">
+
+            <p>Quieres botar este item : "{{storage}}" ?</p>
+
+            <form action="{% url 'deleteStorage' storage.id %}" method="post">
+                {% csrf_token %}
+                <a class="btn btn-info" href="{% url 'storage' %}">Cancelar</a>
+
+                <input class="btn btn-danger" type="submit" value="Confirm">
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
