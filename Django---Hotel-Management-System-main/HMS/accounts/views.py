@@ -20,6 +20,8 @@ from .forms import *
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group
 from .models import CustomUser
+from django.shortcuts import get_object_or_404, redirect
+from .models import CustomUser, Guest, Employee
 # Create your views here.
 
 
@@ -471,17 +473,19 @@ def completeTask(request, pk):
 
 @user_passes_test(lambda u: u.is_superuser)
 def assign_role(request, user_id):
-    custom_user = get_object_or_404(CustomUser, id=user_id)
+    user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
         role_id = request.POST.get('role')
         role = get_object_or_404(Group, id=role_id)
+        custom_user = CustomUser.objects.get(user=user)
         custom_user.role = role
         custom_user.save()
-        custom_user.user.groups.clear()
-        custom_user.user.groups.add(role)
-        return redirect('user_list')
+        user.groups.clear()
+        user.groups.add(role)
+        messages.success(request, f"Rol asignado a {user.username} con éxito.")
+        return redirect('employees')
     roles = Group.objects.all()
-    return render(request, 'accounts/assign_role.html', {'custom_user': custom_user, 'roles': roles})
+    return render(request, 'admin/assign_role.html', {'user': user, 'roles': roles})
 
 
 @user_passes_test(lambda u: u.is_superuser)

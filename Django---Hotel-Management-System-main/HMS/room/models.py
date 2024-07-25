@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 from accounts.models import Guest
+from django.db.models import Q
 # Create your models here.
 
 
@@ -25,10 +26,10 @@ class Room(models.Model):
         return str(self.number)
     
     def is_available(self, check_in, check_out):
-        overlapping_bookings = self.booking_set.filter(
-            Q(startDate__lt=check_out) & Q(endDate__gt=check_in)
-        )
-        return not overlapping_bookings.exists()
+    overlapping_bookings = self.booking_set.filter(
+        Q(startDate__lt=check_out) & Q(endDate__gt=check_in)
+    )
+    return not overlapping_bookings.exists()
 
 
 class Booking(models.Model):

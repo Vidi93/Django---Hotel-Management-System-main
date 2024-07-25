@@ -18,6 +18,9 @@ from room.models import *
 from hotel.models import *
 from .forms import BookingForm
 from .models import Room, Booking
+from django.shortcuts import get_object_or_404, redirect
+from datetime import datetime
+from accounts.models import Guest
 
 
 
@@ -491,14 +494,13 @@ def booking_make(request):
                 messages.error(request, "La fecha de salida debe ser posterior a la fecha de entrada.")
                 return redirect("rooms")
             
-            # Verificar disponibilidad
             if not room.is_available(check_in_date, check_out_date):
                 messages.error(request, "La habitación no está disponible para las fechas seleccionadas.")
                 return redirect("rooms")
             
-            # Crear la reserva
+            guest = Guest.objects.get(custom_user__user=request.user)
             booking = Booking.objects.create(
-                guest=request.user.guest,
+                guest=guest,
                 roomNumber=room,
                 startDate=check_in_date,
                 endDate=check_out_date

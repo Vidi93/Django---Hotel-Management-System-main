@@ -19,6 +19,9 @@ from django.contrib.auth.decorators import user_passes_test
 from .models import Report, Room
 from accounts.models import CustomUser
 from room.models import Booking
+from django.utils import timezone
+from django.http import HttpResponseBadRequest
+from room.models import Room, Booking
 
 
 @login_required(login_url='login')
@@ -479,34 +482,21 @@ def verify(request):
     return render(request, path + "verify.html", context)
 
 
-@user_passes_test(lambda u: u.is_staff)
-def generate_report(request, report_type):
-    if report_type == 'room_occupancy':
-        # Lógica para generar informe de ocupación
-        pass
-    elif report_type == 'user_data':
-        # Lógica para generar informe de usuarios
-        pass
-    # ... otros tipos de informes ...
-    return render(request, 'report.html', {'report': report})
-
 
 @user_passes_test(lambda u: u.is_superuser)
 def generate_report(request, report_type):
     if report_type == 'room_occupancy':
         rooms = Room.objects.all()
-        bookings = Booking.objects.filter(startDate__lte=timezone.now(), endDate__gte=timezone.now())
-        occupancy_data = {room.number: bookings.filter(roomNumber=room).exists() for room in rooms}
+        bookings = Booking.objects.filter(startDate__lte=timezone.now().date(), endDate__gte=timezone.now().date())
+        occupancy_data = [{'number': room.number, 'occupied': bookings.filter(roomNumber=room).exists()} for room in rooms]
         context = {'report_type': 'Ocupación de Habitaciones', 'data': occupancy_data}
     elif report_type == 'user_data':
         users = User.objects.all()
-        user_data = [{
-            'username': user.username,
-            'email': user.email,
-            'is_staff': user.is_staff,
-            'date_joined': user.date_joined,
-            'last_login': user.last_login
-        } for user in users]
+        user_data = [
+            {'username': user.username, 'email': user.email, 'is_staff': user.is_staff, 
+             'date_joined': user.date_joined, 'last_login': user.last_login}
+            for user in users
+        ]
         context = {'report_type': 'Datos de Usuarios', 'data': user_data}
     else:
         return HttpResponseBadRequest("Tipo de informe no válido")
