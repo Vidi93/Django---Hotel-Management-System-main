@@ -2,7 +2,7 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-
+from .models import Employee, CustomUser
 from .models import *
 
 
@@ -18,10 +18,33 @@ class CreateUserForm(UserCreationForm):
                   'email', 'password1', 'password2']
 
 
-class CreateEmployeeForm(ModelForm):
+class CreateEmployeeForm(forms.ModelForm):
+    username = forms.CharField(max_length=150)
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput)
+    phone_number = PhoneNumberField()
+    salary = forms.FloatField()
+
     class Meta:
         model = Employee
-        fields = ['phoneNumber', 'salary']
+        fields = ['salary']
+
+    def save(self, commit=True):
+        user_data = self.cleaned_data
+        user = User.objects.create_user(
+            username=user_data['username'],
+            email=user_data['email'],
+            password=user_data['password']
+        )
+        custom_user = CustomUser.objects.create(
+            user=user,
+            phone_number=user_data['phone_number']
+        )
+        employee = super().save(commit=False)
+        employee.custom_user = custom_user
+        if commit:
+            employee.save()
+        return employee
 
 
 class editEmployee(ModelForm):

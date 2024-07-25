@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-
 from accounts.models import Guest, Employee
 
 
@@ -68,7 +67,7 @@ class Report(models.Model):
     content = models.TextField()
 
     def __str__(self):
-        return str(self.content) + " " + str(self.date)
+        return f"{self.content[:50]}... - {self.date}"
 
 
 class Storage(models.Model):
@@ -87,12 +86,4 @@ class Storage(models.Model):
         return str(self.itemName)
     
 
-class Report(models.Model):
-    REPORT_TYPES = [
-        ('room_occupancy', 'Ocupación de Habitaciones'),
-        ('user_data', 'Datos de Usuarios'),
-        ('financial', 'Informe Financiero'),
-    ]
-    type = models.CharField(max_length=20, choices=REPORT_TYPES)
-    date_generated = models.DateTimeField(auto_now_add=True)
-    content = models.JSONField()  # Para almacenar datos estructurados
+

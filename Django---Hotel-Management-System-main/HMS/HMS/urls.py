@@ -4,6 +4,8 @@ from room import views as room_views
 from accounts.views import *
 from room.views import *
 from hotel.views import *
+from accounts import views as accounts_views
+from hotel import views as hotel_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -59,4 +61,6 @@ urlpatterns = [
     path('deleteBooking/<str:pk>/', deleteBooking, name="deleteBooking"),
     path('completeTask/<str:pk>/', completeTask, name="completeTask"),
     path('assign-role/<int:user_id>/', accounts_views.assign_role, name='assign_role'),
+    path('delete-user/<int:user_id>/', accounts_views.delete_user, name='delete_user'),
+    path('report/<str:report_type>/', hotel_views.generate_report, name='generate_report'),
 ]

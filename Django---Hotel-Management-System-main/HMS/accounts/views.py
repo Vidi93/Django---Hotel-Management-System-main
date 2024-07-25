@@ -22,6 +22,7 @@ from django.contrib.auth.models import Group
 from .models import CustomUser
 from django.shortcuts import get_object_or_404, redirect
 from .models import CustomUser, Guest, Employee
+from room.models import Booking
 # Create your views here.
 
 

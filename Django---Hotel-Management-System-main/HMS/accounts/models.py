@@ -1,7 +1,5 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
 from django.contrib.auth.models import User, Group
 # Create your models here.
 
@@ -20,25 +18,25 @@ class Guest(models.Model):
         return self.custom_user.user.username
 
     def numOfBooking(self):
-        return Booking.objects.filter(guest=self).count()
+        return self.booking_set.count()
 
     def numOfDays(self):
         totalDay = 0
-        bookings = Booking.objects.filter(guest=self)
+        bookings = self.booking_set.all()
         for b in bookings:
             day = b.endDate - b.startDate
-            totalDay += int(day.days)
+            totalDay += day.days
         return totalDay
 
     def numOfLastBookingDays(self):
-        try:
-            return int((Booking.objects.filter(guest=self).last().endDate - Booking.objects.filter(guest=self).last().startDate).days)
-        except:
-            return 0
+        last_booking = self.booking_set.last()
+        if last_booking:
+            return (last_booking.endDate - last_booking.startDate).days
+        return 0
 
     def currentRoom(self):
-        booking = Booking.objects.filter(guest=self).last()
-        return booking.roomNumber if booking else None
+        last_booking = self.booking_set.last()
+        return last_booking.roomNumber if last_booking else None
 
 
 class Employee(models.Model):

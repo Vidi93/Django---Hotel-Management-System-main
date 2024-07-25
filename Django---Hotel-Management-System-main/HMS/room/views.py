@@ -1,5 +1,5 @@
 # imports
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm
 
 from django.db.models import Q, Count
@@ -17,10 +17,10 @@ from accounts.models import *
 from room.models import *
 from hotel.models import *
 from .forms import BookingForm
-from .models import Room, Booking
-from django.shortcuts import get_object_or_404, redirect
+from .models import Room, Booking, RoomServices, Refund
 from datetime import datetime
 from accounts.models import Guest
+from .forms import RoomEditForm
 
 
 
@@ -196,7 +196,7 @@ def room_edit(request, pk):
     path = role + "/"
 
     room = Room.objects.get(number=pk)
-    form1 = editRoom(instance=room)
+    form1 = RoomEditForm(instance=room)
 
     context = {
         "role": role,
@@ -205,7 +205,7 @@ def room_edit(request, pk):
     }
 
     if request.method == 'POST':
-        form1 = editRoom(request.POST, instance=room)
+        form1 = RoomEditForm(request.POST, instance=room)
         if form1.is_valid():
             form1.save()
             return redirect("room-profile", id=room.number)
